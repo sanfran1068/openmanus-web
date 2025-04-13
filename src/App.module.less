@@ -82,20 +82,59 @@
   border-radius: 4px;
 }
 
-.responseText {
-  white-space: pre-wrap;
-  line-height: 1.6;
+.message {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  max-width: 80%;
+
+  .messageHeader {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  .messageContent {
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+}
+
+.userMessage {
+  margin-left: auto;
+  background-color: #e6f7ff;
+  border: 1px solid #91d5ff;
+
+  .messageHeader {
+    color: #1890ff;
+  }
+}
+
+.aiMessage {
+  margin-right: auto;
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+
+  .messageHeader {
+    color: #52c41a;
+  }
 }
 
 .inputArea {
+  position: relative;
   display: flex;
   gap: 8px;
 
   :global(.ant-input) {
     flex: 1;
+    padding-right: 50px;
   }
 }
 
 .sendButton {
-  align-self: flex-end;
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 1;
 } 

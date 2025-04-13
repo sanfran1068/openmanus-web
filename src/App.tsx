@@ -7,9 +7,15 @@ import styles from './App.module.less'
 const { Header, Content } = Layout
 const { TextArea } = Input
 
+interface Message {
+  type: 'user' | 'ai'
+  content: string
+  timestamp: number
+}
+
 function App() {
   const [text, setText] = useState('')
-  const [response, setResponse] = useState('')
+  const [messages, setMessages] = useState<Message[]>([])
   const [loading, setLoading] = useState(false)
 
   const handleSend = async () => {
@@ -18,13 +24,30 @@ function App() {
       return
     }
 
+    // Add user message to history
+    const userMessage: Message = {
+      type: 'user',
+      content: text,
+      timestamp: Date.now()
+    }
+    setMessages(prev => [...prev, userMessage])
+    
     setLoading(true)
-    setResponse('')
+    setText('')
 
     try {
+      let aiResponse = ''
       await sendPrompt(text, (text) => {
-        setResponse((prev) => prev + text)
+        aiResponse += text
       })
+      
+      // Add AI response to history
+      const aiMessage: Message = {
+        type: 'ai',
+        content: aiResponse,
+        timestamp: Date.now()
+      }
+      setMessages(prev => [...prev, aiMessage])
     } catch (error) {
       message.error('Failed to send message')
       console.error(error)
@@ -41,11 +64,19 @@ function App() {
       <Content className={styles.content}>
         <Card className={styles.chatCard}>
           <div className={styles.responseArea}>
-            {response && (
-              <div className={styles.responseText}>
-                {response}
+            {messages.map((message, index) => (
+              <div 
+                key={index} 
+                className={`${styles.message} ${message.type === 'user' ? styles.userMessage : styles.aiMessage}`}
+              >
+                <div className={styles.messageContent}>
+                  {message.content}
+                </div>
+                <div className={styles.messageTime}>
+                  {new Date(message.timestamp).toLocaleTimeString()}
+                </div>
               </div>
-            )}
+            ))}
           </div>
           <div className={styles.inputArea}>
             <TextArea
@@ -66,9 +97,7 @@ function App() {
               onClick={handleSend}
               loading={loading}
               className={styles.sendButton}
-            >
-              Send
-            </Button>
+            />
           </div>
         </Card>
       </Content>
